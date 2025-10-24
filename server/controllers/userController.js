@@ -1,5 +1,6 @@
+import bcrypt from "bcryptjs";
+import { generateToken } from "../lib/utils.js";
 import UserModel from "../models/userModel.js";
-import bcrypt from 'bcryptjs';
 
 export const signUp = async (req, res) => {
    const { fullName, email, password, bio } = req.body;
@@ -22,9 +23,24 @@ export const signUp = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, salt);
 
       const newUser = await UserModel.create({
-        fullName, email, password: hashedPassword, bio
+         fullName,
+         email,
+         password: hashedPassword,
+         bio,
       });
 
-      
-   } catch (error) {}
+      const token = generateToken(newUser._id);
+      res.json({
+         success: true,
+         message: "Account created successfully",
+         userData: newUser,
+         token,
+      });
+   } catch (error) {
+      console.error(error.message);
+      res.json({
+         success: false,
+         message: error.message,
+      });
+   }
 };
