@@ -33,3 +33,35 @@ export const getUsersForSidebar = async (req, res) => {
       });
    }
 };
+
+// Get all messages for selected user
+export const getMessages = async (req, res) => {
+   try {
+      const { id: selectedUserId } = req.params;
+      const myId = req.user._id;
+
+      const messages = await MessageModel.find({
+         $or: [
+            { senderId: myId, receiverId: selectedUserId },
+            { senderId: selectedUserId, receiverId: myId },
+         ],
+      });
+
+      await MessageModel.updateMany({
+         senderId: selectedUserId,
+         receiverId: myId,
+         seen: true,
+      });
+      res.json({
+         success: true,
+         message: "Messages fetched successfully",
+         messages,
+      });
+   } catch (error) {
+      console.error(error.message);
+      res.json({
+         success: false,
+         message: error.message,
+      });
+   }
+};
