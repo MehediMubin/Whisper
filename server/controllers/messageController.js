@@ -84,3 +84,36 @@ export const markMessageAsSeen = async (req, res) => {
          message: error.message,
       });
    }
+};
+
+// Send message to selected user
+export const sendMessage = async (req, res) => {
+  try {
+    const {text, image} = req.body;
+    const senderId = req.user._id;
+    const {id: receiverId} = req.params;
+
+    let imageUrl;
+    if (image) {
+      imageUrl = await uploadImage(image);
+    }
+
+    const newMessage = await MessageModel.create({
+      text,
+      image: imageUrl,
+      senderId,
+      receiverId,
+    });
+
+    res.json({
+      success: true,
+      message: "Message sent successfully",
+      newMessage,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }

@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
-import cloudinary from "../lib/cloudinary.js";
-import { generateToken } from "../lib/utils.js";
+import { generateToken, uploadImage } from "../lib/utils.js";
 import UserModel from "../models/userModel.js";
 
 export const signUp = async (req, res) => {
@@ -102,17 +101,17 @@ export const updateProfile = async (req, res) => {
             { new: true }
          );
       } else {
-         const upload = await cloudinary.uploader.upload(profilePic);
+         const imageUrl = await uploadImage(profilePic);
          updatedUser = await UserModel.findByIdAndUpdate(
             userId,
-            { fullName, bio, profilePic: upload.secure_url },
+            { fullName, bio, profilePic: imageUrl },
             { new: true }
          );
       }
       res.json({
          success: true,
          message: "Profile updated successfully",
-         user: updateUser,
+         user: updatedUser,
       });
    } catch (error) {
       console.error(error.message);
