@@ -44,3 +44,36 @@ export const signUp = async (req, res) => {
       });
    }
 };
+
+export const login = async (req, res) => {
+   try {
+      const { email, password } = req.body;
+      const userData = UserModel.findOne({ email });
+
+      const isPasswordCorrect = await bcrypt.compare(
+         password,
+         userData.password
+      );
+
+      if (!isPasswordCorrect) {
+         res.json({
+            success: false,
+            message: "Invalid credentials",
+         });
+      }
+
+      const token = generateToken(userData._id);
+      res.json({
+         success: true,
+         message: "Login successful",
+         userData,
+         token,
+      });
+   } catch (error) {
+      console.error(error.message);
+      res.json({
+         success: false,
+         message: error.message,
+      });
+   }
+};
