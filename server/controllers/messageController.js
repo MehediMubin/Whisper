@@ -65,3 +65,22 @@ export const getMessages = async (req, res) => {
       });
    }
 };
+
+// Mark message as seen using message id
+export const markMessageAsSeen = async (req, res) => {
+   try {
+      const { id: messageId } = req.params;
+
+      await MessageModel.findByIdAndUpdate(messageId, { seen: true });
+
+      res.json({
+         success: true,
+         message: "Message marked as seen",
+      });
+   } catch (error) {
+      console.error(error.message);
+      res.json({
+         success: false,
+         message: error.message,
+      });
+   }
