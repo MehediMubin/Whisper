@@ -3,6 +3,7 @@ import "dotenv/config";
 import express from "express";
 import http from "http";
 import { connectDB } from "./lib/db.js";
+import messageRouter from "./routes/messageRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 
 // Create Express app and HTTP server
@@ -18,6 +19,7 @@ app.use("/api/status", (req, res) => {
    res.send("Server is live");
 });
 app.use("/api/auth", userRouter);
+app.use("/api/messages", messageRouter);
 
 // Connect DB & Start server
 await connectDB();
