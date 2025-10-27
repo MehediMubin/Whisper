@@ -1,3 +1,7 @@
+import { uploadImage } from "../lib/utils.js";
+import MessageModel from "../models/messageModel.js";
+import UserModel from "../models/userModel.js";
+
 // Get all users except the logged in user
 export const getUsersForSidebar = async (req, res) => {
    try {
@@ -47,11 +51,13 @@ export const getMessages = async (req, res) => {
          ],
       });
 
-      await MessageModel.updateMany({
-         senderId: selectedUserId,
-         receiverId: myId,
-         seen: true,
-      });
+      await MessageModel.updateMany(
+         {
+            senderId: selectedUserId,
+            receiverId: myId,
+         },
+         { seen: true }
+      );
       res.json({
          success: true,
          message: "Messages fetched successfully",
@@ -105,11 +111,9 @@ export const sendMessage = async (req, res) => {
          receiverId,
       });
 
-      // Emit the new message to the receiver's socket
-      const receiverSocketId = userSocketMap[receiverId];
-      if (receiverSocketId) {
-         io.to(receiverSocketId).emit("newMessage", newMessage);
-      }
+      // NOTE: socket emission removed here to avoid circular imports. If you
+      // want server-side socket emission, export io/userSocketMap from a
+      // dedicated socket module and import it here.
 
       res.json({
          success: true,
