@@ -1,9 +1,17 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
-import assets, { imagesDummyData } from "../assets/assets";
+import { ChatContext } from "../../context/ChatContext.jsx";
+import assets from "../assets/assets";
 
-const RightSidebar = ({ selectedUser }) => {
-   const { logout } = useContext(AuthContext);
+const RightSidebar = () => {
+   const { logout, onlineUsers } = useContext(AuthContext);
+   const { selectedUser, messages } = useContext(ChatContext);
+   const [msgImages, setMsgImages] = useState([]);
+
+   // Get all the images from the messages and set them to state
+   useEffect(() => {
+      setMsgImages(messages.filter((msg) => msg.image).map((msg) => msg.image));
+   }, [messages]);
 
    return (
       selectedUser && (
@@ -19,10 +27,12 @@ const RightSidebar = ({ selectedUser }) => {
                   className="w-20 aspect-[1/1] rounded-full"
                />
                <h1 className="px-10 text-xl font-medium mx-auto flex items-center gap-2">
-                  <span
-                     className="h-2 w-2 rounded-full bg-green-500 inline-block"
-                     aria-hidden="true"
-                  />
+                  {onlineUsers.includes(selectedUser._id) && (
+                     <span
+                        className="h-2 w-2 rounded-full bg-green-500 inline-block"
+                        aria-hidden="true"
+                     />
+                  )}
                   <span className="text-lg">{selectedUser.fullName}</span>
                </h1>
                <p className="px-10 mx-auto">{selectedUser.bio}</p>
@@ -33,7 +43,7 @@ const RightSidebar = ({ selectedUser }) => {
             <div className="px-5 text-xs">
                <p>Media</p>
                <div className="mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80">
-                  {imagesDummyData.map((url, idx) => (
+                  {msgImages.map((url, idx) => (
                      <div
                         key={idx}
                         onClick={() => window.open(url)}
