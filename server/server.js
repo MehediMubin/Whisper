@@ -52,10 +52,14 @@ app.use("/api/auth", userRouter);
 app.use("/api/messages", messageRouter);
 
 // Connect DB & Start server
-await connectDB();  
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-   console.log(`Server is running on PORT: ${PORT}`);
-});
+await connectDB();
 
-// do stuff
+if (process.env.NODE_ENV !== "production") {
+   const PORT = process.env.PORT || 5000;
+   server.listen(PORT, () => {
+      console.log(`Server is running on PORT: ${PORT}`);
+   });
+}
+
+// Export server for Vercel deployment
+export default server;
