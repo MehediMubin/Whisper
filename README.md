@@ -93,5 +93,3 @@ Protected endpoints expect a header named `token` containing the JWT. Many clien
 
 -  Add end-to-end or unit tests for auth and messages.
 -  Optionally extract Socket.IO `io` and `userSocketMap` into a small module to allow controllers to emit events without circular imports.
-
-### Thanks
