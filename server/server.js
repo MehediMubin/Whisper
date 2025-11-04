@@ -1,17 +1,13 @@
-import cors from "cors";
 import "dotenv/config";
-import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import app from "./app.js";
 import { connectDB } from "./src/lib/db.js";
-import messageRouter from "./src/routes/messageRoutes.js";
-import userRouter from "./src/routes/userRoutes.js";
 
-// Create Express app and HTTP server
-const app = express();
+// Create HTTP server from the Express app
 const server = http.createServer(app);
 
-// Initialize socket.io server
+// Initialize Socket.IO server
 const io = new Server(server, {
    cors: {
       origin: "*",
@@ -40,18 +36,7 @@ io.on("connection", (socket) => {
    });
 });
 
-// Middleware setup
-app.use(cors());
-app.use(express.json({ limit: "4mb" }));
-
-// Routes setup
-app.use("/api/status", (req, res) => {
-   res.send("Server is live");
-});
-app.use("/api/auth", userRouter);
-app.use("/api/messages", messageRouter);
-
-// Connect DB & Start server
+// Connect DB & start server
 await connectDB();
 
 if (process.env.NODE_ENV !== "production") {
