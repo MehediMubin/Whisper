@@ -27,5 +27,6 @@ const messageSchema = new Schema(
       timestamps: true,
    }
 );
+// Store Message documents in the shared 'whisper' collection
 const MessageModel = mongoose.model("Message", messageSchema);
 export default MessageModel;
